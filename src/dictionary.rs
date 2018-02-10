@@ -7,6 +7,9 @@ use std::io::prelude::*;
 use std::fs::File;
 use std::convert::*;
 use rand::seq::*;
+use std::str;
+use std::collections::HashMap;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -38,13 +41,36 @@ pub struct Dictionary {
     words: Vec<String>,
 }
 
+
+
 impl Dictionary {
     pub fn new() -> Dictionary {
         Dictionary { words: Vec::new() }
     }
 
     pub fn from_words(words: Vec<String>) -> Dictionary {
-        Dictionary { words: words }
+        let REPLACEMENTS: HashMap<&str, &str> = [
+            ("á", "a"),
+            ("é", "e"),
+            ("í", "i"),
+            ("ó", "o"),
+            ("ú", "u"),
+        ].iter()
+            .cloned()
+            .collect();
+        let words2 = words
+            .iter()
+            .cloned()
+            .map(|s: String| {
+                let mut s2 = s.to_lowercase();
+                for k in REPLACEMENTS.keys() {
+                    s2 = s2.replace(k, REPLACEMENTS.get(k).unwrap());
+                }
+                s2
+            })
+            .collect();
+
+        Dictionary { words: words2 }
     }
 
     pub fn from_file(file_name: &str) -> Result<Dictionary, &str> {
@@ -58,7 +84,7 @@ impl Dictionary {
             Err(_) => return Err("Could not process dictionary file"),
             _ => (),
         }
-        let mut lines = buffer.split("\n");
+        let mut lines = buffer.lines();
         let vec: Vec<&str> = lines.collect::<Vec<&str>>();
         let strVec = vec.iter().map(|s| String::from(*s)).collect();
         Ok(Dictionary::from_words(strVec))

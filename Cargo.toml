@@ -5,3 +5,4 @@ authors = ["Victor Gil <baskeboler@gmail.com>"]
 
 [dependencies]
 rand="*"
+clippy="*"
