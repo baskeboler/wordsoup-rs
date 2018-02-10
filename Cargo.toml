@@ -1,0 +1,7 @@
+[package]
+name = "wordsoup"
+version = "0.1.0"
+authors = ["Victor Gil <baskeboler@gmail.com>"]
+
+[dependencies]
+rand="*"
